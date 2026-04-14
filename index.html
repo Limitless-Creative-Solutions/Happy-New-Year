@@ -389,7 +389,7 @@
     </div>
 
     <div class="cta-row">
-      <button class="btn btn-primary" onclick="handleCTA('contact')">📩 0753472687</button>
+      <button class="btn btn-primary" onclick="handleCTA('contact')">📩 Contact Us</button>
      <!-- <button class="btn btn-secondary" onclick="handleCTA('services')">🚀 View Services</button>  -->
     </div>
   </div>
@@ -670,11 +670,13 @@ function handleCTA(type) {
 
   setTimeout(() => {
     if (type === 'contact') {
-      alert('📩 Thank you! Redirecting to our contact page...');
+      // Open WhatsApp with the phone number
+      window.open('https://wa.me/94753472687', '_blank');
+      closePopup();
     } else {
       alert('🚀 Redirecting to our services...');
+      closePopup();
     }
-    closePopup();
   }, 500);
 }
 </script>
