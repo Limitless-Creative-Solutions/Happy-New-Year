@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>සුභ අලුත් අවුරුද්දක් වේවා! – Limitless Creative Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Noto+Sans+Sinhala:wght@300;400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky-1: #0a0015;
+    --sky-2: #1a0535;
+    --sky-3: #2d0b5e;
+    --sky-4: #1e1060;
+    --gold: #f5c842;
+    --gold-light: #ffe88a;
+    --pink: #ff6eb4;
+    --blue: #4fc3f7;
+    --purple: #b388ff;
+    --glass-bg: rgba(255,255,255,0.06);
+    --glass-border: rgba(255,255,255,0.18);
+    --glow-gold: 0 0 40px rgba(245,200,66,0.5), 0 0 80px rgba(245,200,66,0.2);
+    --glow-pink: 0 0 40px rgba(255,110,180,0.4);
+    --glow-blue: 0 0 40px rgba(79,195,247,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #111;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Overlay ── */
+  #popup-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: radial-gradient(ellipse at 50% 60%, var(--sky-3) 0%, var(--sky-2) 40%, var(--sky-1) 100%);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; animation: overlayIn 1.2s cubic-bezier(.16,1,.3,1) forwards;
+    overflow: hidden;
+  }
+
+  @keyframes overlayIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  /* ── Sky gradient drift ── */
+  #sky-gradient {
+    position: absolute; inset: -50%;
+    width: 200%; height: 200%;
+    background: conic-gradient(from 0deg at 50% 50%,
+      #0a001580, #2d0b5e60, #1e106080, #4a0e8040, #0a001580);
+    animation: skyDrift 20s linear infinite;
+    opacity: 0.6;
+  }
+  @keyframes skyDrift {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* ── Stars layer ── */
+  #stars { position: absolute; inset: 0; pointer-events: none; }
+  .star {
+    position: absolute; border-radius: 50%;
+    background: white;
+    animation: twinkle var(--d, 3s) ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    0% { opacity: 0.1; transform: scale(0.8); }
+    100% { opacity: 0.9; transform: scale(1.2); }
+  }
+
+  /* ── Firework canvas ── */
+  #firework-canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 1;
+  }
+
+  /* ── Floating sparkles ── */
+  .sparkle {
+    position: absolute; pointer-events: none;
+    width: 6px; height: 6px; border-radius: 50%;
+    animation: floatSparkle var(--sd, 8s) ease-in-out infinite;
+    opacity: 0;
+  }
+  @keyframes floatSparkle {
+    0%   { transform: translateY(0) scale(0); opacity: 0; }
+    20%  { opacity: 1; transform: translateY(-30px) scale(1); }
+    80%  { opacity: 0.6; }
+    100% { transform: translateY(-120px) scale(0.3); opacity: 0; }
+  }
+
+  /* ── Popup card ── */
+  #popup-card {
+    position: relative; z-index: 10;
+    width: min(680px, 94vw);
+    max-height: 92vh;
+    overflow-y: auto;
+    border-radius: 28px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.06),
+      0 40px 120px rgba(0,0,0,0.6),
+      0 0 80px rgba(180,100,255,0.15),
+      inset 0 1px 0 rgba(255,255,255,0.12);
+    padding: 48px 44px 44px;
+    transform: scale(0.6) translateY(60px);
+    filter: blur(20px);
+    opacity: 0;
+    animation: cardReveal 1.4s 0.8s cubic-bezier(.16,1,.3,1) forwards;
+    scrollbar-width: none;
+  }
+  #popup-card::-webkit-scrollbar { display: none; }
+
+  @keyframes cardReveal {
+    0%   { transform: scale(0.6) translateY(60px); filter: blur(20px); opacity: 0; }
+    60%  { filter: blur(2px); opacity: 1; }
+    100% { transform: scale(1) translateY(0); filter: blur(0); opacity: 1; }
+  }
+
+  /* floating card drift */
+  #popup-card { animation: cardReveal 1.4s 0.8s cubic-bezier(.16,1,.3,1) forwards,
+                             cardFloat 6s 2.5s ease-in-out infinite; }
+  @keyframes cardFloat {
+    0%,100% { transform: translateY(0px) rotate(0deg); }
+    33%  { transform: translateY(-8px) rotate(0.3deg); }
+    66%  { transform: translateY(-4px) rotate(-0.2deg); }
+  }
+
+  /* ── Corner buttons ── */
+  .corner-btn {
+    position: absolute; top: 18px;
+    width: 38px; height: 38px;
+    border-radius: 50%; border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    color: rgba(255,255,255,0.8);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; transition: all 0.3s ease;
+    z-index: 20;
+  }
+  .corner-btn:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
+  #mute-btn  { right: 60px; }
+  #close-btn { right: 16px; font-size: 18px; }
+
+  /* ── Header greeting ── */
+  .greeting-wrap {
+    text-align: center; margin-bottom: 32px;
+    opacity: 0; animation: staggerIn 0.8s 2.0s ease forwards;
+  }
+  .greeting-emoji { font-size: 2.4rem; display: block; margin-bottom: 8px; }
+
+  .greeting-main {
+    font-family: 'Noto Sans Sinhala', sans-serif;
+    font-size: clamp(1.5rem, 4.5vw, 2.2rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 40%, var(--pink) 80%, var(--purple) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    line-height: 1.3;
+    animation: staggerIn 0.8s 2.0s ease forwards, glowPulse 3s 3s ease-in-out infinite;
+    opacity: 0;
+    text-shadow: none;
+    filter: drop-shadow(0 0 20px rgba(245,200,66,0.6));
+  }
+  @keyframes glowPulse {
+    0%,100% { filter: drop-shadow(0 0 10px rgba(245,200,66,0.4)); }
+    50%      { filter: drop-shadow(0 0 30px rgba(245,200,66,0.9)) drop-shadow(0 0 60px rgba(255,110,180,0.4)); }
+  }
+
+  .year-badge {
+    display: inline-block; margin-top: 10px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; letter-spacing: 6px; font-weight: 400;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    opacity: 0; animation: staggerIn 0.6s 2.4s ease forwards;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    width: 100%; height: 1px; margin: 24px 0;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--pink), var(--purple), transparent);
+    opacity: 0; animation: staggerIn 0.6s 2.6s ease forwards;
+  }
+
+  /* ── Promo body ── */
+  .promo-body {
+    opacity: 0; animation: staggerIn 0.8s 2.8s ease forwards;
+  }
+
+  .promo-lead {
+    font-family: 'Noto Sans Sinhala', sans-serif;
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+    color: rgba(255,255,255,0.85);
+    line-height: 1.85; margin-bottom: 20px;
+    font-weight: 300;
+  }
+
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.1rem, 3vw, 1.4rem);
+    text-align: center; margin: 18px 0;
+    background: linear-gradient(90deg, var(--blue), var(--purple), var(--pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    letter-spacing: 2px;
+    opacity: 0; animation: staggerIn 0.6s 3.0s ease forwards;
+  }
+
+  /* ── Services grid ── */
+  .services-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin: 18px 0;
+    opacity: 0; animation: staggerIn 0.7s 3.2s ease forwards;
+  }
+  .service-chip {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px; border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.8rem; color: rgba(255,255,255,0.8);
+    transition: all 0.3s ease;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .service-chip:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(245,200,66,0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .service-chip .dot {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  }
+
+  /* ── Discount badge ── */
+  .discount-badge {
+    text-align: center; margin: 22px 0;
+    padding: 16px 24px; border-radius: 16px;
+    background: linear-gradient(135deg, rgba(245,200,66,0.12), rgba(255,110,180,0.08));
+    border: 1px solid rgba(245,200,66,0.3);
+    box-shadow: 0 0 30px rgba(245,200,66,0.1);
+    opacity: 0; animation: staggerIn 0.7s 3.4s ease forwards;
+  }
+  .discount-badge p {
+    font-family: 'Noto Sans Sinhala', sans-serif;
+    font-size: clamp(0.8rem, 2.2vw, 0.92rem);
+    color: rgba(255,255,255,0.85); line-height: 1.7;
+  }
+  .discount-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3rem); font-weight: 900;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    display: block; line-height: 1;
+    text-shadow: none;
+    filter: drop-shadow(0 0 20px rgba(245,200,66,0.7));
+  }
+
+  /* ── CTA buttons ── */
+  .cta-row {
+    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+    margin-top: 28px;
+    opacity: 0; animation: staggerIn 0.7s 3.6s ease forwards;
+  }
+  .btn {
+    position: relative; overflow: hidden;
+    padding: 14px 32px; border-radius: 50px; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: all 0.35s ease;
+    letter-spacing: 0.5px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #f5c842, #ff6eb4);
+    color: #1a0535;
+    box-shadow: 0 0 30px rgba(245,200,66,0.5), 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 0 50px rgba(245,200,66,0.7), 0 12px 40px rgba(0,0,0,0.4);
+  }
+  .btn-secondary {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.9);
+    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+  }
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.16);
+    border-color: rgba(79,195,247,0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 0 30px rgba(79,195,247,0.3);
+  }
+  /* Ripple */
+  .btn .ripple {
+    position: absolute; border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    transform: scale(0); pointer-events: none;
+    animation: rippleAnim 0.6s linear;
+  }
+  @keyframes rippleAnim {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  /* ── Shared stagger ── */
+  @keyframes staggerIn {
+    0%   { opacity: 0; transform: translateY(18px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Close out ── */
+  #popup-overlay.closing {
+    animation: overlayOut 0.7s cubic-bezier(.7,0,.84,0) forwards;
+  }
+  @keyframes overlayOut {
+    0%   { opacity: 1; }
+    100% { opacity: 0; pointer-events: none; }
+  }
+
+  /* ── Scrollbar ── */
+  #popup-card { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
+
+  /* ── Mobile tweaks ── */
+  @media (max-width: 480px) {
+    #popup-card { padding: 36px 22px 32px; border-radius: 20px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .cta-row { flex-direction: column; align-items: stretch; }
+    .btn { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── EXISTING PAGE CONTENT (preserved) ─────────────────────── -->
+<div id="page-content" style="padding:60px 40px;color:#fff;text-align:center;opacity:0.3;font-family:'DM Sans',sans-serif;">
+  <h1 style="font-size:2rem;margin-bottom:12px;">Welcome to Limitless Creative Solutions</h1>
+  <p style="opacity:0.6;">Your page content lives here, undisturbed.</p>
+</div>
+
+<!-- ─── POPUP OVERLAY ─────────────────────────────────────────── -->
+<div id="popup-overlay">
+  <div id="sky-gradient"></div>
+  <div id="stars"></div>
+  <canvas id="firework-canvas"></canvas>
+
+  <!-- floating sparkles injected by JS -->
+
+  <div id="popup-card">
+    <!-- Controls -->
+    <button class="corner-btn" id="mute-btn" title="Mute/Unmute">🔊</button>
+    <button class="corner-btn" id="close-btn" title="Close" aria-label="Close popup">✕</button>
+
+    <!-- Greeting -->
+    <div class="greeting-wrap">
+      <span class="greeting-emoji">🎉</span>
+      <h1 class="greeting-main">සුභ අලුත් අවුරුද්දක් වේවා!</h1>
+      <span class="year-badge">Happy New Year 2026</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Promo body -->
+    <div class="promo-body">
+      <p class="promo-lead">
+        2026 දී ඔයාගේ Business එක next level එකට ගෙනියන්න හිතනවද?<br>
+        ඔයාගේ budget එකට ගැළපෙන විදිහට Websites, Mobile Apps, Softwares develop කරගන්න පුළුවන් එකම තැන...
+      </p>
+    </div>
+
+    <div class="brand-name">✨ Limitless Creative Solutions ✨</div>
+
+    <div class="services-grid">
+      <div class="service-chip"><span class="dot" style="background:#4fc3f7;box-shadow:0 0 6px #4fc3f7"></span>Professional Websites</div>
+      <div class="service-chip"><span class="dot" style="background:#b388ff;box-shadow:0 0 6px #b388ff"></span>Mobile Applications</div>
+      <div class="service-chip"><span class="dot" style="background:#ff6eb4;box-shadow:0 0 6px #ff6eb4"></span>Custom Software</div>
+      <div class="service-chip"><span class="dot" style="background:#f5c842;box-shadow:0 0 6px #f5c842"></span>Social Media Handling</div>
+    </div>
+
+    <div class="discount-badge">
+      <span class="discount-pct">15% OFF 🎁</span>
+      <p style="margin-top:6px;">
+        විශේෂ අවුරුදු දීමනාව — මේකෙන් contact කරන ඔබට<br>
+        <strong style="color:rgba(255,255,255,0.95);">15% Special Discount</strong> ලබාදෙනවා!
+      </p>
+    </div>
+
+    <div class="cta-row">
+      <button class="btn btn-primary" onclick="handleCTA('contact')">📩 Contact Us</button>
+     <!-- <button class="btn btn-secondary" onclick="handleCTA('services')">🚀 View Services</button>  -->
+    </div>
+  </div>
+</div>
+
+<!-- ─── AUDIO ENGINE ───────────────────────────────────────────── -->
+<script>
+/* ──────────────────────────────────────────────
+   1.  WEB AUDIO – all sounds synthesised, no files needed
+   ────────────────────────────────────────────── */
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let ctx = null;
+let muted = false;
+const MASTER_GAIN = 0.22;
+
+function getCtx() {
+  if (!ctx) ctx = new AudioCtx();
+  return ctx;
+}
+
+/* Chime / welcome bell */
+function playWelcomeChime() {
+  if (muted) return;
+  const ac = getCtx();
+  const g = ac.createGain();
+  g.gain.setValueAtTime(0, ac.currentTime);
+  g.gain.linearRampToValueAtTime(MASTER_GAIN * 0.9, ac.currentTime + 0.05);
+  g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 3.5);
+  g.connect(ac.destination);
+
+  const freqs = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+  freqs.forEach((freq, i) => {
+    const osc = ac.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, ac.currentTime + i * 0.18);
+    osc.connect(g);
+    osc.start(ac.currentTime + i * 0.18);
+    osc.stop(ac.currentTime + i * 0.18 + 2.8);
+  });
+}
+
+/* Firework pop */
+function playFireworkSound(variation) {
+  if (muted) return;
+  const ac = getCtx();
+  const g = ac.createGain();
+  g.gain.setValueAtTime(MASTER_GAIN * 0.55, ac.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.8);
+  g.connect(ac.destination);
+
+  // Noise burst
+  const bufLen = ac.sampleRate * 0.15;
+  const buf = ac.createBuffer(1, bufLen, ac.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) data[i] = (Math.random() * 2 - 1);
+  const noise = ac.createBufferSource();
+  noise.buffer = buf;
+
+  const filter = ac.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.value = 600 + variation * 400;
+  filter.Q.value = 0.5;
+
+  noise.connect(filter); filter.connect(g);
+  noise.start();
+
+  // Sparkle tones
+  [variation * 200 + 800, variation * 300 + 1200].forEach(f => {
+    const o = ac.createOscillator();
+    const og = ac.createGain();
+    o.frequency.value = f;
+    o.type = 'sine';
+    og.gain.setValueAtTime(MASTER_GAIN * 0.3, ac.currentTime);
+    og.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.6);
+    o.connect(og); og.connect(ac.destination);
+    o.start(); o.stop(ac.currentTime + 0.6);
+  });
+}
+
+/* ──────────────────────────────────────────────
+   2.  STARS
+   ────────────────────────────────────────────── */
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 120; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const sz = Math.random() * 2.5 + 0.5;
+  s.style.cssText = `
+    width:${sz}px; height:${sz}px;
+    left:${Math.random()*100}%; top:${Math.random()*100}%;
+    --d:${(Math.random()*3+1.5).toFixed(1)}s;
+    animation-delay:${(Math.random()*4).toFixed(1)}s;
+  `;
+  starsEl.appendChild(s);
+}
+
+/* ──────────────────────────────────────────────
+   3.  FLOATING SPARKLES
+   ────────────────────────────────────────────── */
+const overlay = document.getElementById('popup-overlay');
+const sparkColors = ['#f5c842','#ff6eb4','#4fc3f7','#b388ff','#ffe88a'];
+for (let i = 0; i < 30; i++) {
+  const sp = document.createElement('div');
+  sp.className = 'sparkle';
+  sp.style.cssText = `
+    left:${Math.random()*100}%; top:${80 + Math.random()*20}%;
+    background:${sparkColors[i % sparkColors.length]};
+    box-shadow:0 0 6px ${sparkColors[i % sparkColors.length]};
+    --sd:${(Math.random()*6+5).toFixed(1)}s;
+    animation-delay:${(Math.random()*6).toFixed(1)}s;
+  `;
+  overlay.appendChild(sp);
+}
+
+/* ──────────────────────────────────────────────
+   4.  FIREWORKS CANVAS
+   ────────────────────────────────────────────── */
+const fCanvas = document.getElementById('firework-canvas');
+const fCtx = fCanvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  fCanvas.width  = window.innerWidth;
+  fCanvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor(x, y, color) {
+    this.x = x; this.y = y;
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 5 + 2;
+    this.vx = Math.cos(angle) * speed;
+    this.vy = Math.sin(angle) * speed;
+    this.alpha = 1;
+    this.color = color;
+    this.radius = Math.random() * 2.5 + 1;
+    this.gravity = 0.08;
+    this.friction = 0.97;
+  }
+  update() {
+    this.vx *= this.friction;
+    this.vy *= this.friction;
+    this.vy += this.gravity;
+    this.x += this.vx;
+    this.y += this.vy;
+    this.alpha -= 0.013;
+  }
+  draw() {
+    fCtx.save();
+    fCtx.globalAlpha = Math.max(0, this.alpha);
+    fCtx.beginPath();
+    fCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    fCtx.fillStyle = this.color;
+    fCtx.shadowColor = this.color;
+    fCtx.shadowBlur = 8;
+    fCtx.fill();
+    fCtx.restore();
+  }
+}
+
+const fwColors = [
+  ['#f5c842','#ffe88a','#ffd700'],
+  ['#ff6eb4','#ff9dcb','#ff4499'],
+  ['#4fc3f7','#81d4fa','#00bfff'],
+  ['#b388ff','#ce93d8','#e040fb'],
+  ['#ffffff','#e0e0ff','#c8c8ff'],
+];
+
+function launchFirework(x, y) {
+  const palette = fwColors[Math.floor(Math.random() * fwColors.length)];
+  const count = 90 + Math.floor(Math.random() * 40);
+  for (let i = 0; i < count; i++) {
+    particles.push(new Particle(x, y, palette[i % palette.length]));
+  }
+  playFireworkSound(Math.random() * 3);
+}
+
+function animateFireworks() {
+  fCtx.clearRect(0, 0, fCanvas.width, fCanvas.height);
+  particles = particles.filter(p => p.alpha > 0);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animateFireworks);
+}
+animateFireworks();
+
+/* Auto-launch fireworks on schedule */
+function scheduleFireworks() {
+  const w = fCanvas.width, h = fCanvas.height;
+  const positions = [
+    [w*0.15, h*0.25],[w*0.85, h*0.2],[w*0.5, h*0.15],
+    [w*0.3,  h*0.35],[w*0.7, h*0.3],[w*0.5, h*0.4],
+  ];
+  let idx = 0;
+  // Initial burst after popup opens
+  const initBurst = setTimeout(() => {
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => {
+        const [x, y] = positions[i];
+        launchFirework(x, y);
+      }, i * 350);
+    }
+  }, 2000);
+
+  // Ongoing periodic fireworks
+  const interval = setInterval(() => {
+    const [x, y] = positions[idx % positions.length];
+    launchFirework(x + (Math.random()-0.5)*120, y + (Math.random()-0.5)*60);
+    idx++;
+  }, 2200);
+
+  // Keep ref for cleanup
+  window._fwInterval = interval;
+  window._fwTimeout = initBurst;
+}
+
+/* ──────────────────────────────────────────────
+   5.  POPUP INIT
+   ────────────────────────────────────────────── */
+window.addEventListener('load', () => {
+  scheduleFireworks();
+  // Welcome chime fires when card fully reveals
+  setTimeout(() => playWelcomeChime(), 2000);
+});
+
+/* ──────────────────────────────────────────────
+   6.  MUTE TOGGLE
+   ────────────────────────────────────────────── */
+document.getElementById('mute-btn').addEventListener('click', () => {
+  muted = !muted;
+  document.getElementById('mute-btn').textContent = muted ? '🔇' : '🔊';
+  if (ctx) ctx.suspend && (muted ? ctx.suspend() : ctx.resume());
+});
+
+/* ──────────────────────────────────────────────
+   7.  CLOSE POPUP
+   ────────────────────────────────────────────── */
+function closePopup() {
+  overlay.classList.add('closing');
+  clearInterval(window._fwInterval);
+  overlay.addEventListener('animationend', () => {
+    overlay.style.display = 'none';
+    document.getElementById('page-content').style.opacity = '1';
+    document.getElementById('page-content').style.transition = 'opacity 0.6s ease';
+  }, { once: true });
+}
+document.getElementById('close-btn').addEventListener('click', closePopup);
+
+/* Close on overlay click (outside card) */
+overlay.addEventListener('click', e => {
+  if (e.target === overlay) closePopup();
+});
+
+/* ──────────────────────────────────────────────
+   8.  BUTTON RIPPLE + ACTIONS
+   ────────────────────────────────────────────── */
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    const r = document.createElement('span');
+    r.className = 'ripple';
+    const rect = this.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    r.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${e.clientX - rect.left - size/2}px;
+      top:${e.clientY - rect.top - size/2}px;
+    `;
+    this.appendChild(r);
+    setTimeout(() => r.remove(), 700);
+  });
+});
+
+function handleCTA(type) {
+  // Launch celebratory firework on button click
+  const w = window.innerWidth, h = window.innerHeight;
+  launchFirework(w * 0.5 + (Math.random()-0.5)*200, h * 0.5);
+
+  setTimeout(() => {
+    if (type === 'contact') {
+      alert('📩 Thank you! Redirecting to our contact page...');
+    } else {
+      alert('🚀 Redirecting to our services...');
+    }
+    closePopup();
+  }, 500);
+}
+</script>
+</body>
+</html>
